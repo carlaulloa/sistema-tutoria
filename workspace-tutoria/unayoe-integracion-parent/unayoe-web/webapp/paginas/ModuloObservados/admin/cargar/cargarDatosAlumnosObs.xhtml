@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition
+	template="/plantilla/ModuloObservados/Plantillas/plantilla_o.xhtml">
+
+	<ui:define name="contenido">
+		<h:form id="formMensajes">
+			<p:outputPanel id="pnlGridMensajes"
+				style="width:400px;margin-top:5px;">
+				<p:row>
+					<p:column colspan="4" rowspan="2">
+						<p:messages id="messages" showDetail="true" autoUpdate="true"
+							closable="true" />
+					</p:column>
+				</p:row>
+			</p:outputPanel>
+		</h:form>
+
+		<f:facet name="header">
+			<p:row>
+				<p:column colspan="3">Datos de los Alumnos Observados >> Cargar alumnos observados</p:column>
+			</p:row>
+		</f:facet>
+
+		<h:form>
+
+
+			<p:panelGrid id="pnlGridLoginAcceso">
+				<f:facet name="header">
+					<p:row>
+						<p:column colspan="3">Cargar datos de alumnos observados desde Excel</p:column>
+					</p:row>
+				</f:facet>
+
+				<p:row>
+					<p:column styleClass="ui-column-label-spij styleAlignRightColumn">
+						<h:outputText id="lCargar"
+							value="#{mensaje['unayoe.ingresar.datos.alumnos.label.cargar']}" />
+					</p:column>
+					<p:column>
+						<p:inputText id="nombreExcel"
+							value="#{datosAlumnosMBean.archivoModel.nombre}" size="50"
+							readonly="true" />
+					</p:column>
+					<p:column styleClass="ui-column-label-spij styleAlignRightColumn">
+						<p:fileUpload
+							fileUploadListener="#{datosAlumnosMBean.handleFileUpload}"
+							sizeLimit="5000000" update="nombreExcel" auto="true"
+							mode="advanced" allowTypes="/(\.|\/)(xlsx|xls)$/"
+							invalidFileMessage="Solo se puede ingresar documento Excel"
+							invalidSizeMessage="Tamaño maximo del documento Excel: 5 MB"
+							multiple="false" rendered="true" label="Seleccionar Excel" />
+					</p:column>
+				</p:row>
+
+				<p:row id="filExcel">
+					<p:column colspan="3"
+						styleClass="ui-column-label-spij styleAlignCenterColumn">
+						<p:commandButton value="Mostrar" id="botonMostrar" ajax="true"
+							update="tablaAlumnos"
+							actionListener="#{datosAlumnosMBean.validarDatosAlumnosCargados()}" />
+					</p:column>
+				</p:row>
+
+				<p:row>
+					<p:column colspan="3"
+						style="font-weight:bold;font-size:15px;color:red;">#{mensaje['unayoe.ingresar.grilla']}</p:column>
+				</p:row>
+
+
+
+
+
+				<p:row id="filTabla">
+
+					<p:column id="colTabla"
+						styleClass="ui-column-label-spij styleAlignRightColumn"
+						colspan="3">
+						<p:dataTable id="tablaAlumnos"
+							value="#{datosAlumnosMBean.datosAlumnoExcelModelGrid}"
+							var="registro" binding="#{tabla}"
+							emptyMessage="Sin datos para cargar" paginator="true" rows="20">
+							<f:facet name="header"
+								style="font-weight:bold;font-size:150px;color:black;">
+           			 		CICLO 2016-2
+        					</f:facet>
+							<p:column headerText="Fila" style="width:30px;">
+								<h:outputText value="#{tabla.rowIndex + 1}" />
+							</p:column>
+
+							<p:column headerText="Codigo(*)"
+								style="font-weight:bold;color:black;width:60px;">
+								<h:outputText style="font-weight:normal;color:black;"
+									value="#{registro.cod_alumno}" />
+							</p:column>
+
+							<p:column headerText="Apellido paterno(*)"
+								style="font-weight:bold;color:black;width:80px;">
+								<h:outputText style="font-weight:normal;color:black;"
+									value="#{registro.ap_paterno}" />
+							</p:column>
+
+							<p:column headerText="Apellido materno(*)"
+								style="font-weight:bold;color:black;width:80px;">
+								<h:outputText style="font-weight:normal;color:black;"
+									value="#{registro.ap_materno}" />
+							</p:column>
+
+							<p:column headerText="Nombres(*)"
+								style="font-weight:bold;color:black;width:80px;">
+								<h:outputText style="font-weight:normal;color:black;"
+									value="#{registro.nombres}" />
+							</p:column>
+
+							<p:column headerText="Plan(*)"
+								style="font-weight:bold;color:black;width:40px;">
+								<h:outputText style="font-weight:normal;color:black;"
+									value="#{registro.cod_plan}" />
+							</p:column>
+
+
+
+
+
+
+							<p:column headerText="Codigo de Curso(*)"
+								style="font-weight:bold;color:black;width:90px;">
+
+								<p:commandButton id="cursoBtn" type="button"
+									value="#{registro.cod_curso}" />
+
+								<p:overlayPanel id="cursoPanel" for="cursoBtn" hideEffect="fade"
+									dynamic="true" style="width:300px">
+									<p:panelGrid columns="2" columnClasses="label,value">
+
+										<h:outputText value="Cod Curso: " />
+										<h:outputText value="#{registro.cod_curso}" />
+
+										<h:outputText value="Curso: " />
+										<h:outputText value="#{registro.des_curso}" />
+
+										<h:outputText value="Repitencias: " />
+										<h:outputText value="#{registro.repitencias}" />
+
+									</p:panelGrid>
+								</p:overlayPanel>
+							</p:column>
+
+							<p:column headerText="Cod. Docente(*)"
+								style="font-weight:bold;color:black;width:90px;">
+								<p:commandButton id="docenteBtn" type="button"
+									value="#{registro.cod_docente}" />
+								<p:overlayPanel id="docentePanel" for="docenteBtn"
+									hideEffect="fade" dynamic="true" style="width:300px">
+									<p:panelGrid columns="2" columnClasses="label,value">
+
+										<h:outputText value="Cod Docente: " />
+										<h:outputText value="#{registro.cod_docente}" />
+
+										<h:outputText value="Docente: " />
+										<h:outputText value="#{registro.nom_docente}" />
+
+										<h:outputText value="Frecuencia:" />
+										<h:outputText value="#{registro.nom_frecuencia}" />
+
+
+										<h:outputText value="Dia: " />
+										<h:outputText value="#{registro.dia}" />
+
+									</p:panelGrid>
+								</p:overlayPanel>
+							</p:column>
+
+							<p:column headerText="Hora Inicio(*)"
+								style="font-weight:bold;color:black;width:60px;">
+								<h:outputText style="font-weight:normal;"
+									value="#{registro.hora_inicio}" />
+							</p:column>
+
+							<p:column headerText="Hora Fin(*)"
+								style="font-weight:bold;color:black;width:60px;">
+								<h:outputText style="font-weight:normal;"
+									value="#{registro.hora_fin}" />
+							</p:column>
+
+							<p:column headerText="Existe">
+								<h:outputText style="font-weight:normal;"
+									value="#{registro.existe}" />
+							</p:column>
+
+							<p:column headerText="Válido">
+								<h:outputText value="#{registro.valido}" />
+							</p:column>
+						</p:dataTable>
+					</p:column>
+				</p:row>
+
+				<p:row>
+					<p:column colspan="3">
+						<p:commandButton value="Guardar" id="botonGuardar"
+							actionListener="#{datosAlumnosMBean.guardarTutoriaObservados}"
+							update="tablaAlumnos, nombreExcel" ajax="true" />
+					</p:column>
+				</p:row>
+
+			</p:panelGrid>
+
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

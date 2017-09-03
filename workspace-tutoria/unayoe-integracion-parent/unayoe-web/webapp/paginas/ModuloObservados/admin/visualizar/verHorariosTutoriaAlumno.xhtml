@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/plantilla/ModuloObservados/Plantillas/plantilla_o.xhtml">
+	<ui:define name="contenido">
+		<h:form>
+			<f:facet name="header">
+			<p:row>
+				<p:column colspan="3">Ver Horarios de Tutoria >> De alumnos</p:column>
+			</p:row>
+			</f:facet>
+	
+			<p:panel header="Ver horarios de Tutoria en Alumnos Observados"
+				style="width: 95%;border: 0px;">
+				
+			    <p:tabView>
+			        <p:tab title="Buscar por Alumno">
+			         	<h:panelGrid columns="2" style="margin-bottom:20px" cellpadding="3">		         	
+							<h:outputText value="Codigo Alumno" />						
+							<p:inputText
+										id="a_codigo"
+										value="#{registrarTutoriaMBean.tutoriaModelSelect.aCodigo}"
+										size="30" />
+																						
+							<h:outputText  value="Nombre de Alumno" />	
+							<p:inputText  id="a_nombre"
+										  value="#{registrarTutoriaMBean.tutoriaModelSelect.aNombre}"
+										  size="40" />
+							<p:spacer width="30px" />  								
+							<p:commandButton update="tablaResultado1, a_nombre"
+											 value="#{mensaje['unayoe.ingresar.datos.alumnos.label.buscar']}"
+											 actionListener="#{registrarTutoriaMBean.buscarHorariosTutoria(1)}" />
+	
+						</h:panelGrid>											
+	
+									<p:dataTable 
+										id="tablaResultado1" style="font-size:10px;margin-bottom:20px"
+										value="#{registrarTutoriaMBean.listAsistenciaTutoria}" var="lista"
+										emptyMessage="Datos de Tutoria Vacio">
+				
+										<p:column headerText="Ciclo académico" style="font-size: 12px;width: 10%">
+											<h:outputText value="#{lista.tAnio}-#{lista.tPeriodo}" />
+										</p:column>
+				
+										<p:column headerText="Nombre Curso" style="font-size: 12px;width: 20%">
+											<h:outputText value="#{lista.c_nombre}" />
+										</p:column>
+				
+										<p:column headerText="# Repitencias" style="font-size: 12px;width: 8%">
+											<h:outputText value="#{lista.repitencia}" />
+										</p:column>
+				
+										<p:column headerText="Nombre tutor" style="font-size: 12px;width: 20%">
+											<h:outputText value="#{lista.p_nombre}" />
+										</p:column>
+				
+										<p:column headerText="Frecuencia" style="font-size: 12px;width: 15%">
+											<h:outputText value="#{lista.descFrecuencia}" />
+										</p:column>
+										
+										<p:column headerText="Dia" style="font-size: 12px;width: 15%">
+											<h:outputText value="#{lista.dia}" />
+										</p:column>
+				
+										<p:column headerText="Hora de Inicio" style="font-size: 12px;width: 10%">
+											<h:outputText value="#{lista.horaIni}" />
+										</p:column>
+				
+										<p:column headerText="Hora Fin" style="font-size: 12px;width: 10%">
+											<h:outputText value="#{lista.horaFin}" />
+										</p:column>
+									</p:dataTable>
+							
+								<p:commandButton 
+											id="botonExportar1"
+											value="Exportar" 
+											actionListener="#{registrarTutoriaMBean.imprimirReporteHorarioAlumno}" ajax="false" />	
+							
+			        </p:tab>
+			        <p:tab title="Buscar por tutor">					
+					   		 		  <h:panelGrid columns="2" style="margin-bottom:20px" cellpadding="3">				   		 		  				   		 		  		                    	
+											<h:outputText 
+												id="idCurso"
+				                                value="#{mensaje['unayoe.ingresar.datos.alumnos.label.curso']}"/>																	
+											<p:selectOneMenu 
+				                    			id="selectOneCurso" 
+				                    			value="#{registrarTutoriaMBean.tutoriaModelSelect.cCodigo}" 
+				                    			valueChangeListener="#{registrarTutoriaMBean.actualizarDocenteGenerico}"
+				                    			styleClass="ui-column-label-spij styleAlignRightColumn">
+				                        		<f:selectItem itemLabel="Seleccione el curso:"/>
+				                        		<f:selectItems 
+				                        			value="#{registrarTutoriaMBean.tutoriaModel.listarCursos}"
+				                                    var="cursos" itemLabel="#{cursos.nombre}"
+				                                    itemValue="#{cursos.cCodigo}" />
+				                        		<f:ajax event="change" execute="@this" render="selectOneProfesor"/>
+				                    		</p:selectOneMenu>
+																			                    		                  		                    	
+											<h:outputText 
+				                    			id="idTutor"
+				                    			value="#{mensaje['unayoe.ingresar.datos.alumnos.label.docente']}"/>
+											<p:selectOneMenu 
+												id="selectOneProfesor"
+												value="#{registrarTutoriaMBean.tutoriaModelSelect.pCodigo}"	
+												styleClass="ui-column-label-spij styleAlignRightColumn">
+												<f:selectItem itemLabel="Seleccione el tutor: " />
+												<f:selectItems
+													value="#{registrarTutoriaMBean.tutoriaModel.listarTutores}"
+													var="profesor" itemLabel="#{profesor.pNombre}"
+													itemValue="#{profesor.pCodigo}" />											
+											</p:selectOneMenu>
+									
+											<p:spacer width="30px" />  
+											<p:commandButton update="tablaResultado, a_nombre , a_codigo, cursoBuscado , profesorBuscado"
+												value="#{mensaje['unayoe.ingresar.datos.alumnos.label.buscar']}"
+												actionListener="#{registrarTutoriaMBean.buscarHorariosTutoriaDocente(1)}" />																			                                                     		                    
+			                 		</h:panelGrid>
+	
+	
+								
+									
+										<p:dataTable 
+											id="tablaResultado" style="font-size:10px;"
+											value="#{registrarTutoriaMBean.listAsistenciaTutoriaDocente}" var="lista"
+											emptyMessage="Datos de Tutoria Vacio">
+					
+											<p:column headerText="Ciclo académico" style="font-size: 12px;width: 10%">
+												<h:outputText value="#{lista.tAnio}-#{lista.tPeriodo}" />
+											</p:column>
+									
+											<p:column headerText="# Repitencias" style="font-size: 12px;width: 10%">
+												<h:outputText value="#{lista.repitencia}" />
+											</p:column>
+					
+											<p:column headerText="Nombre alumno" style="font-size: 12px;width: 30%">
+												<h:outputText value="#{lista.p_nombre}" />
+											</p:column>
+					
+											<p:column headerText="Frecuencia" style="font-size: 12px;width: 15%">
+												<h:outputText value="#{lista.descFrecuencia}" />
+											</p:column>
+											
+											<p:column headerText="Dia" style="font-size: 12px;width: 15%">
+												<h:outputText value="#{lista.dia}" />
+											</p:column>
+					
+											<p:column headerText="Hora de Inicio" style="font-size: 12px;width: 10%">
+												<h:outputText value="#{lista.horaIni}" />
+											</p:column>
+					
+											<p:column headerText="Hora Fin" style="font-size: 12px;width: 10%">
+												<h:outputText value="#{lista.horaFin}" />
+											</p:column>
+										</p:dataTable>
+																																												                 	
+									<h:outputText id="cursoBuscado" value="Curso : #{registrarTutoriaMBean.cursoBuscado}"/>
+								    <p:spacer width="25px"/> 																																         
+									<h:outputText  id = "profesorBuscado" value="Tutor : #{registrarTutoriaMBean.profesorBuscado}"/>
+									 <p:spacer width="25px"/>
+									 
+										<h:panelGrid columns="1" style="margin-top:10px" cellpadding="1">		
+										<p:commandButton 
+											id="botonExporta2r"
+											value="Exportar" 
+											actionListener="#{registrarTutoriaMBean.imprimirReporteHorarioDocente}" ajax="false" />  							
+										   
+										</h:panelGrid> 	 								
+			        </p:tab>
+			    </p:tabView>						
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>
+
+
+</html>
